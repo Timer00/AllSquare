@@ -13,7 +13,7 @@ function listen() {
     console.log('Example app listening at http://' + host + ':' + port);
 }
 
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 
 // -WebSocket Portion-
 // WebSockets work with the HTTP server
