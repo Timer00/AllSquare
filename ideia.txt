@@ -1,0 +1,13 @@
+
+Server inicia
+Client se conecta ao server -> um objeto player é criado com o id desse socket
+
+Input do cliente
+Input + id do socket é enviado para o servidor
+servidor acha o player pelo id e passa o input para o objeto
+ao receber o input o objeto exerce a ação no player
+e então transforma o player em instruções de desenho
+as instruções são enviadas a todos os clientes
+
+Notes:
+    Arrays usadas com keys de string nao podem ser transferidas. Utilize objetos no lugar.
