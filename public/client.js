@@ -9,7 +9,7 @@ function setup() {
     let canvas = document.getElementById('box');
     let ctx = canvas.getContext('2d');
 
-    socket = io.connect('http://localhost:3000');//Connect to the server
+    socket = io.connect();//Connect to the server
 
     socket.on('output',function (output) {//Listen from any output from the server, in this case what to draw on screen
             ctx.clearRect(0,0,canvas.width,canvas.height);//clear canvas for new frames

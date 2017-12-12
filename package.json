@@ -4,12 +4,24 @@
   "description": "This is an example for how to use sockets with p5.js.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "author": "Daniel Shiffman",
   "license": "ISC",
   "dependencies": {
     "express": "^4.13.4",
     "socket.io": "^1.4.5"
-  }
+  },
+  "engines": {
+    "node": "7.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Timer00/AllSquare"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
 }

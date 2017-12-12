@@ -1,21 +1,16 @@
 const express = require('express');
-// Create the app
 const app = express();
 
-// Set up the server
-// process.env.PORT is related to deploying on heroku
-//let server = app.listen(process.env.PORT || 3000, listen);
-let server = app.listen(app.get('port'), function() {
-    console.log('Node app is running on port', app.get('port'));
-});
-// This call back just tells us that the server has started
-function listen() {
-    let host = server.address().address;
-    let port = server.address().port;
-    console.log('Example app listening at http://' + host + ':' + port);
-}
-
+app.set('port', (process.env.PORT || 3000));
 app.use(express.static(__dirname + '/public'));
+
+app.get('/', function(request, response) {
+    response.send('Hello World!')
+});
+
+let server = app.listen(app.get('port'), function() {
+    console.log("Node app is running at localhost:" + app.get('port'))
+});
 
 // -WebSocket Portion-
 // WebSockets work with the HTTP server
