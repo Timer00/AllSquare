@@ -1,6 +1,7 @@
 let players = {};
 let [keyUp, keyDown, keyLeft, keyRight] = [87, 83, 65, 68];
 let possibleCollisions = [];
+let debugData = {};
 
 function collision(a, b, type) {
     if (type === 'touch') {
@@ -15,106 +16,93 @@ function collision(a, b, type) {
     }
 }
 
-function MovementReaction(target,collisionsObject){//Both must have: x,y,width,height - Target must have: speedX,speedY,up,down,left,right;
-    for (let i = 0;i < collisionsObject.length;i++){//collisionsObject is a array with the collision objects, each object has the properties listed above.
-        let COS = collisionsObject[i];//collision objects
-        if (target === COS){
-            this.objectNumber = i;
-            break;
-        }
-    }
-
-    this.update = function () {
-        if (target.keys[keyUp]) {
-            target.speedY = -target.speed;
-            if (target.speedY < 0) {
-                for (let i = 0; i > target.speedY; i--) {
-                    target.y -= 1;
-                    for (let g = 0; g in collisionsObject; g++) {
-                        if (g !== this.objectNumber) {
-                            if (collision(target, collisionsObject[g],'touch')) {
-                                target.y += 1;
-                                collisionsObject[g].y -= 1;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (target.keys[keyDown]) {
-            target.speedY = target.speed;
-            if (target.speedY > 0) {
-                for (let i = 0; i < target.speedY; i++) {
-                    target.y += 1;
-                    for (let g = 0; g in collisionsObject; g++) {
-                        if (g !== this.objectNumber) {
-                            if (collision(target, collisionsObject[g],'touch')) {
-                                target.y -= 1;
-                                collisionsObject[g].y += 1;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (target.keys[keyLeft]) {
-            target.speedX = -target.speed;
-            if (target.speedX < 0) {
-                for (let i = 0; i > target.speedX; i--) {
-                    target.x -= 1;
-                    for (let g = 0; g in collisionsObject; g++) {
-                        if (g !== this.objectNumber) {
-                            if (collision(target, collisionsObject[g],'touch')) {
-                                target.x += 1;
-                                collisionsObject[g].x -= 1;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (target.keys[keyRight]) {
-            target.speedX = target.speed;
-            if (target.speedX > 0) {
-                for (let i = 0; i < target.speedX; i++) {
-                    target.x += 1;
-                    for (let g = 0; g in collisionsObject; g++) {
-                        if (g !== this.objectNumber) {
-                            if (collision(target, collisionsObject[g],'touch')) {
-                                target.x -= 1;
-                                collisionsObject[g].x += 1;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+function angle(a, b) {
+    let dy = a.center.y - b.center.y;
+    let dx = a.center.x - b.center.x;
+    let theta = Math.atan2(dy, dx); // range (-PI, PI]
+    theta *= 180 / Math.PI; // rads to degs, range (-180, 180]
+    if (theta < 0) theta = 360 + theta; // range [0, 360)
+    return theta;
 }
 
-function Player(id) {
+function angleDirection(angle) {
+    let direction = '';
+    if (angle > 45 && angle < 135) {
+        direction = 'up';
+    } else if (angle > 135 && angle < 225) {
+        direction = 'right';
+    } else if (angle > 225 && angle < 315) {
+        direction = 'down';
+    } else {
+        direction = 'left';
+    }
+    return direction;
+}
+
+function Player(id,imageKey) {
     this.id = id;
-    this.width=this.height=this.size = 20;
-    this.x = Math.random()*(500-this.size);
-    this.y = Math.random()*(500-this.size);
+    this.width = this.height = this.size = 20;
+    this.x = 250;
+    this.y = 250;
+    this.center = {x:this.x+this.size/2,y:this.y+this.size/2};
     this.speed = 2;
-    this.color = `rgb(${Math.round(Math.random()*255)},${Math.round(Math.random()*255)},${Math.round(Math.random()*255)})`;
+    this.color = `rgb(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)})`;
     this.keys = {};
+    this.imageKey = imageKey;
 
     possibleCollisions.push(this);
-    this.collision = new MovementReaction(this, possibleCollisions);
 
-    this.update = ()=>{
-        this.collision.update();
-    }
+    this.movement = () => {
+        if (this.keys[keyUp]) {
+            this.y -= this.speed;
+        }
+        if (this.keys[keyDown]) {
+            this.y += this.speed;
+        }
+        if (this.keys[keyLeft]) {
+            this.x -= this.speed;
+        }
+        if (this.keys[keyRight]) {
+            this.x += this.speed;
+        }
+    };
+    this.collision = () => {
+        for (let solid of possibleCollisions) {
+            if (solid !== this) {
+                for (let i = 0; i < this.speed;i++){
+                    if (collision(this, solid, 'touch')) {
+                        if (angleDirection(angle(this, solid)) === 'up') {
+                            this.y += 1;
+                            solid.y -= 1;
+                        }
+                        if (angleDirection(angle(this, solid)) === 'down') {
+                            this.y -= 1;
+                            solid.y += 1;
+                        }
+                        if (angleDirection(angle(this, solid)) === 'left') {
+                            this.x += 1;
+                            solid.x -= 1;
+                        }
+                        if (angleDirection(angle(this, solid)) === 'right') {
+                            this.x -= 1;
+                            solid.x += 1;
+                        }
+                    }
+                }
+                //debugData[this.id] = this.id+': '+angle(this,solid) +'<br>' + angleDirection(angle(this,solid));
+            }
+        }
+
+    };
+    this.update = () => {
+        this.movement();
+        this.collision();
+        this.center = {x:this.x+this.size/2,y:this.y+this.size/2};
+    };
 }
 
-function updatePlayers(ps/*players*/){//Updates all players using an array of players
-    for (let i in ps){
+function updatePlayers(ps/*players*/) {//Updates all players using an array of players
+    for (let i in ps) {
         if (ps.hasOwnProperty(i)) {
             ps[i].update();
         }
@@ -125,3 +113,4 @@ function updatePlayers(ps/*players*/){//Updates all players using an array of pl
 module.exports.Player = Player;
 module.exports.players = players;
 module.exports.updatePlayers = updatePlayers;
+module.exports.debugData = debugData;
