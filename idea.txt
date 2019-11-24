@@ -1,3 +1,8 @@
 Collision system
     if the squares are colliding, find ones positioning relative to the other(left,right,up,left) and repel it accordingly.
     To detect position use the angle between both object's center x and y.
+
+
+
+KeyPress -> movement
+collision checking

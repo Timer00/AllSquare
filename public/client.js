@@ -39,7 +39,6 @@ function setup() {
             ctx.clearRect(0,0,canvas.width,canvas.height);//clear canvas for new frames
             for (let i in output){
                 if (output.hasOwnProperty(i)) {
-                    console.log('square'+output[i].imageKey);
                     ctx.drawImage(images['square'+output[i].imageKey],output[i].x,output[i].y,output[i].size,output[i].size);
                 }
             }

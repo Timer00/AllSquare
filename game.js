@@ -39,12 +39,12 @@ function angleDirection(angle) {
     return direction;
 }
 
-function Player(id,imageKey) {
+function Player(id, imageKey) {
     this.id = id;
     this.width = this.height = this.size = 20;
     this.x = 250;
     this.y = 250;
-    this.center = {x:this.x+this.size/2,y:this.y+this.size/2};
+    this.center = {x: this.x + this.size / 2, y: this.y + this.size / 2};
     this.speed = 2;
     this.color = `rgb(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)})`;
     this.keys = {};
@@ -54,50 +54,45 @@ function Player(id,imageKey) {
 
     this.movement = () => {
         if (this.keys[keyUp]) {
-            this.y -= this.speed;
+            this.y -= 1;
         }
         if (this.keys[keyDown]) {
-            this.y += this.speed;
+            this.y += 1;
         }
         if (this.keys[keyLeft]) {
-            this.x -= this.speed;
+            this.x -= 1;
         }
         if (this.keys[keyRight]) {
-            this.x += this.speed;
+            this.x += 1;
         }
     };
     this.collision = () => {
         for (let solid of possibleCollisions) {
             if (solid !== this) {
-                for (let i = 0; i < this.speed;i++){
-                    if (collision(this, solid, 'touch')) {
-                        if (angleDirection(angle(this, solid)) === 'up') {
-                            this.y += 1;
-                            solid.y -= 1;
-                        }
-                        if (angleDirection(angle(this, solid)) === 'down') {
-                            this.y -= 1;
-                            solid.y += 1;
-                        }
-                        if (angleDirection(angle(this, solid)) === 'left') {
-                            this.x += 1;
-                            solid.x -= 1;
-                        }
-                        if (angleDirection(angle(this, solid)) === 'right') {
-                            this.x -= 1;
-                            solid.x += 1;
-                        }
+                if (collision(this, solid, 'touch')) {
+                    if (angleDirection(angle(this, solid)) === 'up') {
+                        solid.y -= 1;
+                    }
+                    if (angleDirection(angle(this, solid)) === 'down') {
+                        solid.y += 1;
+                    }
+                    if (angleDirection(angle(this, solid)) === 'left') {
+                        solid.x -= 1;
+                    }
+                    if (angleDirection(angle(this, solid)) === 'right') {
+                        solid.x += 1;
                     }
                 }
-                //debugData[this.id] = this.id+': '+angle(this,solid) +'<br>' + angleDirection(angle(this,solid));
             }
+            //debugData[this.id] = this.id+': '+angle(this,solid) +'<br>' + angleDirection(angle(this,solid));
         }
-
     };
     this.update = () => {
-        this.movement();
-        this.collision();
-        this.center = {x:this.x+this.size/2,y:this.y+this.size/2};
+        for (let i = 0; i < this.speed; i++) {
+            this.movement();
+            this.collision();
+        }
+        this.center = {x: this.x + this.size / 2, y: this.y + this.size / 2};
     };
 }
 
